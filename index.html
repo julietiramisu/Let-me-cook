@@ -8,8 +8,8 @@
       name="description"
       content="Find your next favorite meal with Let Me Cook — a cozy recipe discovery kitchen."
     />
-    <title>Let Me Cook — find your next favorite</title>
-    <link rel="icon" href="images/let-me-cook-mark.svg" type="image/svg+xml" />
+    <title>Let Me Cook. Find your next favorite</title>
+    <link rel="icon" href="images/let%20me%20cook%20logo.webp" type="image/webp" />
     <link rel="preconnect" href="https://www.themealdb.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,7 +23,7 @@
   <body>
     <header class="site-header">
       <a class="brand" href="#" aria-label="Let Me Cook home">
-        <img src="images/let-me-cook-mark.svg" alt="" width="42" height="42" />
+        <img src="images/let%20me%20cook%20logo.webp" alt="" width="42" height="42" />
         <span>let me <strong>cook</strong></span>
       </a>
       <nav class="main-nav" aria-label="Main navigation">
@@ -31,9 +31,9 @@
         <a href="#cuisines">Cuisines</a>
         <a href="#categories">Categories</a>
       </nav>
-      <button class="sound-button" id="soundButton" type="button" aria-pressed="false" aria-label="Play soft kitchen ambience">
+      <button class="sound-button" id="soundButton" type="button" aria-pressed="false" aria-label="Play my song">
         <span aria-hidden="true">♫</span>
-        <span>Soft ambience</span>
+        <span>Play me</span>
       </button>
       <button class="cookbook-button" id="cookbookButton" type="button" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.75h12a1 1 0 0 1 1 1v14l-7-3.5-7 3.5v-14a1 1 0 0 1 1-1Z" /></svg>
@@ -146,7 +146,7 @@
 
     <footer class="site-footer">
       <a class="brand brand-small" href="#" aria-label="Let Me Cook home">
-        <img src="images/let-me-cook-mark.svg" alt="" width="32" height="32" />
+        <img src="images/let%20me%20cook%20logo.webp" alt="" width="32" height="32" />
         <span>let me <strong>cook</strong></span>
       </a>
       <span>Recipes from the open kitchen at TheMealDB <span aria-hidden="true">♡</span></span>
@@ -157,6 +157,7 @@
       <button class="dialog-close" id="dialogClose" type="button" aria-label="Close recipe">×</button>
       <div id="recipeDetails"></div>
     </dialog>
+    <audio id="songAudio" src="audio/Megan%20Trainor%20-%20Better%20when%20Im%20Dancing.mp3" loop preload="none"></audio>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </body>
 </html>

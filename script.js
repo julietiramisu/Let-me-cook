@@ -2,13 +2,18 @@ const API_BASE = "https://www.themealdb.com/api/json/v1/1/";
 const FAVORITES_KEY = "let-me-cook-favorites";
 const SUGGESTED_CUISINES = [
   "Japanese",
-  "Korean",
+  "Spanish",
   "Mexican",
   "Chinese",
   "Indian",
   "Canadian",
   "Italian",
-  "French",
+  "Jamaican",
+  "British",
+  "Turkish",
+  "Algerian",
+  "Syrian",
+  "Ukrainian",
   "Thai",
   "Vietnamese",
 ];
@@ -29,24 +34,30 @@ const CATEGORY_ORDER = [
   "Starter",
 ];
 const CUISINE_THEMES = {
-  Japanese: { accent: "#668779", pale: "#e5ede8", dark: "#49685d" },
-  Korean: { accent: "#a45554", pale: "#f2e6e3", dark: "#874241" },
-  Mexican: { accent: "#c06b43", pale: "#f5e9dd", dark: "#9d5031" },
-  Chinese: { accent: "#ae5146", pale: "#f3e7e1", dark: "#893b34" },
-  Indian: { accent: "#c1843e", pale: "#f3ebdc", dark: "#95602a" },
-  Canadian: { accent: "#66866c", pale: "#e7ede5", dark: "#4b6a51" },
-  Italian: { accent: "#7c8655", pale: "#eaecdf", dark: "#626c40" },
-  French: { accent: "#9a6d83", pale: "#f0e8ed", dark: "#785066" },
-  Thai: { accent: "#bd7047", pale: "#f4e9df", dark: "#985333" },
-  Vietnamese: { accent: "#658675", pale: "#e6ede8", dark: "#496858" },
+  Japanese: { accent: "#7c83b5", pale: "#eeedfa", dark: "#595e91" },
+  Spanish: { accent: "#9b76b9", pale: "#f0eafa", dark: "#71528f" },
+  Mexican: { accent: "#a773b3", pale: "#f4e9f5", dark: "#79517f" },
+  Chinese: { accent: "#916fb4", pale: "#eee9f6", dark: "#674c87" },
+  Indian: { accent: "#9b79bd", pale: "#f0eafa", dark: "#70518f" },
+  Canadian: { accent: "#7b83b0", pale: "#eeeff9", dark: "#575f8b" },
+  Italian: { accent: "#8874b3", pale: "#efebf8", dark: "#63518a" },
+  Jamaican: { accent: "#846db0", pale: "#efebf8", dark: "#5e4d88" },
+  British: { accent: "#927dbb", pale: "#f0edf9", dark: "#69588f" },
+  Turkish: { accent: "#a072b5", pale: "#f2eaf7", dark: "#724f87" },
+  Algerian: { accent: "#a878b8", pale: "#f3eaf7", dark: "#765188" },
+  Syrian: { accent: "#8f72b3", pale: "#efebf8", dark: "#66518a" },
+  Ukrainian: { accent: "#7b7fb6", pale: "#ededf9", dark: "#565b91" },
+  Thai: { accent: "#9d79bd", pale: "#f1ebfa", dark: "#71538e" },
+  Vietnamese: { accent: "#7984b1", pale: "#edf0f9", dark: "#565f8b" },
 };
-const CUISINE_API_AREAS = { Korean: "South Korean" };
+const CUISINE_API_AREAS = { Indian: "India" };
 
 const elements = {
   categoryChips: document.querySelector("#categoryChips"),
   categorySelect: document.querySelector("#categorySelect"),
   clearFiltersButton: document.querySelector("#clearFiltersButton"),
   cookbookButton: document.querySelector("#cookbookButton"),
+  songAudio: document.querySelector("#songAudio"),
   cuisineChips: document.querySelector("#cuisineChips"),
   dialogClose: document.querySelector("#dialogClose"),
   heroImage: document.querySelector("#heroImage"),
@@ -82,7 +93,6 @@ let dialogMealId = "";
 let currentDialogMeal = null;
 let requestNumber = 0;
 let toastTimer;
-let ambience = null;
 
 function readFavorites() {
   try {
@@ -139,44 +149,21 @@ function showToast(message) {
   toastTimer = setTimeout(() => elements.toast.classList.remove("is-visible"), 2600);
 }
 
-async function toggleAmbience() {
-  if (ambience) {
-    const activeAmbience = ambience;
-    ambience = null;
-    activeAmbience.master.gain.setTargetAtTime(0.0001, activeAmbience.context.currentTime, 0.15);
-    activeAmbience.oscillators.forEach((oscillator) => oscillator.stop(activeAmbience.context.currentTime + 0.6));
+async function toggleMusic() {
+  if (!elements.songAudio.paused) {
+    elements.songAudio.pause();
+    elements.songAudio.currentTime = 0;
     elements.soundButton.setAttribute("aria-pressed", "false");
-    elements.soundButton.setAttribute("aria-label", "Play soft kitchen ambience");
-    window.setTimeout(() => activeAmbience.context.close(), 700);
-    return;
-  }
-  if (!window.AudioContext) {
-    showToast("Soft ambience is not supported in this browser.");
+    elements.soundButton.setAttribute("aria-label", "Play my song");
     return;
   }
   try {
-    const context = new window.AudioContext();
-    await context.resume();
-    const master = context.createGain();
-    master.gain.setTargetAtTime(0.06, context.currentTime, 1.2);
-    master.connect(context.destination);
-    const oscillators = [174.61, 220, 261.63, 392].map((frequency) => {
-      const oscillator = context.createOscillator();
-      const tone = context.createGain();
-      oscillator.type = "sine";
-      oscillator.frequency.value = frequency;
-      tone.gain.value = 0.018;
-      oscillator.connect(tone);
-      tone.connect(master);
-      oscillator.start();
-      return oscillator;
-    });
-    ambience = { context, master, oscillators };
+    await elements.songAudio.play();
     elements.soundButton.setAttribute("aria-pressed", "true");
-    elements.soundButton.setAttribute("aria-label", "Pause soft kitchen ambience");
+    elements.soundButton.setAttribute("aria-label", "Pause my song");
   } catch (error) {
-    console.error("Could not start soft ambience:", error);
-    showToast("Couldn't start ambience. Please check your browser audio settings.");
+    console.error("Could not play the selected music:", error);
+    showToast("Couldn't play the song. Please check that the audio file is available.");
   }
 }
 
@@ -186,14 +173,14 @@ function setTheme(cuisine = "") {
   if (!theme) {
     root.style.removeProperty("--accent");
     root.style.removeProperty("--accent-pale");
-    root.style.removeProperty("--terracotta");
-    root.style.removeProperty("--terracotta-dark");
+    root.style.removeProperty("--purple");
+    root.style.removeProperty("--purple-dark");
     return;
   }
   root.style.setProperty("--accent", theme.accent);
   root.style.setProperty("--accent-pale", theme.pale);
-  root.style.setProperty("--terracotta", theme.accent);
-  root.style.setProperty("--terracotta-dark", theme.dark);
+  root.style.setProperty("--purple", theme.accent);
+  root.style.setProperty("--purple-dark", theme.dark);
 }
 
 function updateFilterButtons() {
@@ -211,7 +198,7 @@ function updateFilterButtons() {
 function renderCuisineButtons(areas) {
   const availableAreas = new Set(areas.map((area) => area.strArea.toLowerCase()));
   elements.cuisineChips.innerHTML = SUGGESTED_CUISINES
-    .filter((cuisine) => availableAreas.has((CUISINE_API_AREAS[cuisine] || cuisine).toLowerCase()))
+    .filter((cuisine) => availableAreas.has(cuisine.toLowerCase()))
     .map((cuisine) => `<button class="cuisine-chip" type="button" data-cuisine="${escapeHtml(cuisine)}" aria-pressed="false">${escapeHtml(cuisine)}</button>`)
     .join("");
 }
@@ -608,7 +595,7 @@ elements.categoryChips.addEventListener("click", (event) => {
 elements.categorySelect.addEventListener("change", () => setCategory(elements.categorySelect.value));
 elements.cookbookButton.addEventListener("click", showCookbook);
 elements.randomButton.addEventListener("click", surpriseMe);
-elements.soundButton.addEventListener("click", toggleAmbience);
+elements.soundButton.addEventListener("click", toggleMusic);
 elements.loadMoreButton.addEventListener("click", () => {
   visibleMealCount = Math.min(visibleMealCount + 12, displayedMeals.length);
   renderMeals(displayedMeals, true);
