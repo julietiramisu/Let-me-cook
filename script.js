@@ -277,7 +277,7 @@ function renderMeals(meals, preserveCount = false) {
     elements.loadMoreButton.hidden = true;
     showEmptyState(
       cookbookMode ? "Your cookbook is ready for a first recipe." : "Nothing in the pantry just yet.",
-      cookbookMode ? "Save a recipe with the little bookmark and it will be waiting here." : "Try another search or a different ingredient.",
+      cookbookMode ? "Save a recipe with the bookmark and it will be waiting here." : "Try another search or a different ingredient.",
     );
     return;
   }
@@ -299,7 +299,7 @@ function renderMeals(meals, preserveCount = false) {
         </div>
         <div class="card-meta"><span>${area || "From the kitchen"}</span>${category ? `<span>${category}</span>` : ""}</div>
         <button class="card-title" type="button" data-open-recipe="${escapeHtml(meal.idMeal)}">${escapeHtml(meal.strMeal || "Untitled recipe")}</button>
-        <p class="card-hint">A little something to look forward to</p>
+        <p class="card-hint">Something to look forward to</p>
       </article>`;
   }).join("");
   elements.loadMoreButton.hidden = visibleMealCount >= meals.length;
@@ -328,7 +328,7 @@ async function showRecipeResults(loader, eyebrow, title) {
     if (currentRequest !== requestNumber) return;
     console.error("Could not load recipes:", error);
     setStatus(error.message, true);
-    showEmptyState("The kitchen's taking a little breather.", "Please try again in a moment.");
+    showEmptyState("The kitchen's taking a breather.", "Please try again in a moment.");
   }
 }
 
